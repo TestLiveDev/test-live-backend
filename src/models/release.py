@@ -10,6 +10,7 @@ class Release(Base):
         {'comment': 'Release Table'}
     )
   
-    id_release = Column(Integer, primary_key=True, autoincrement=True, comment='ID Organization')
-    id_organization = Column(Integer, ForeignKey('testlive.t_organization.id_organization'), nullable=False, comment='ID Organization')
+    id_release = Column(Integer, primary_key=True, autoincrement=True, comment='ID Release')
+    id_organization = Column(Integer, ForeignKey('testlive.t_organization.id_organization'),
+                             nullable=False, index=True, comment='ID Organization')
     name_release = Column(String(160), nullable=False, comment='Name Release')

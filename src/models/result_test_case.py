@@ -10,6 +10,6 @@ class ResultTestCase(Base):
         {'comment': 'Result Test Case Table'}
     )
 
-    id_result_test_case = Column(Integer, primary_key=True, autoincrement=True, comment='ID Test Case')
-    id_release = Column(Integer, ForeignKey('testlive.t_releaseid_release'), index=True, comment='ID Relese')
+    id_result_test_case = Column(Integer, primary_key=True, autoincrement=True, comment='ID Result Test Case')
+    id_release = Column(Integer, ForeignKey('testlive.t_release.id_release'), index=True, comment='ID Relese')
     id_test_case = Column(Integer, ForeignKey('testlive.t_test_case.id_test_case'), index=True, comment='ID Test Case')
