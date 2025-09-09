@@ -5,10 +5,7 @@ from sqlalchemy import Column, Integer, ForeignKey, Text
 
 class ResultTestStep(Base):
     __tablename__ = 't_result_test_step'
-    __table_args__ = (
-        {'schema': 'testlive'},
-        {'comment': 'Result Test Step'}
-    )
+    __table_args__ = ({'schema': 'testlive', 'comment': 'Result Test Step'})
 
     id_result_test_step = Column(Integer, primary_key=True, autoincrement=True, comment='ID Result Test Step')
     id_result_test_case = Column(Integer, ForeignKey('testlive.t_result_test_case.id_result_test_case'),
