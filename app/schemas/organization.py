@@ -12,3 +12,7 @@ class OrganizationDBQuery(BaseModel):
 
 class OrganizationCreate(BaseModel):
     name_organization: str
+
+
+class OrganizationDelete(BaseModel):
+    id_organization: int

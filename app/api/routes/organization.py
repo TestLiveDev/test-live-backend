@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from pydantic import StrictBool
 
 from app.api.deps import get_db
-from app.schemas import OrganizationCreate, OrganizationDBQuery
+from app.schemas import OrganizationCreate, OrganizationDelete, OrganizationDBQuery
 from app.models import Oraganization
 
 
@@ -30,5 +30,7 @@ async def upd_organization(db: AsyncSession = Depends(get_db)):
 
 
 @router.delete('')
-async def del_organization(db: AsyncSession = Depends(get_db)):
-    return "Remove Organization"
+async def del_organization(item: OrganizationDelete, db: AsyncSession = Depends(get_db)):
+    await db.execute(delete(Oraganization).where(Oraganization.id_organization == item.id_organization))
+    await db.commit()
+    return True

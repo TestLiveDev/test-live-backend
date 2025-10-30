@@ -1,1 +1,1 @@
-from .organization import OrganizationCreate, OrganizationDBQuery  # noqa
+from .organization import OrganizationCreate, OrganizationDelete, OrganizationDBQuery  # noqa
