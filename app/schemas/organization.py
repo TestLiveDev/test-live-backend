@@ -14,5 +14,9 @@ class OrganizationCreate(BaseModel):
     name_organization: str
 
 
+class OrganizationUpdate(OrganizationCreate):
+    id_organization: int
+
+
 class OrganizationDelete(BaseModel):
     id_organization: int
