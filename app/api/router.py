@@ -2,8 +2,10 @@ from fastapi import APIRouter
 
 from app.api.routes import organization
 from app.api.routes import release
+from app.api.routes import test_plan
 
+routes = (organization, release, test_plan)
 
 api_router = APIRouter()
-api_router.include_router(organization.router)
-api_router.include_router(release.router)
+for rout in routes:
+    api_router.include_router(rout.router)
