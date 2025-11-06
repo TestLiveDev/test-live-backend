@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, literal
 
 from app.api.deps import get_db
 from app.models import TestPlan
@@ -10,7 +10,26 @@ router = APIRouter(prefix='/test_plan', tags=['Test Plan'])
 
 @router.get('/{id_organization}', response_model=list[TestPlanDBQuery])
 async def get_test_plan(id_organization: int, db: AsyncSession = Depends(get_db)):
-    return (await db.execute(select(TestPlan).where(TestPlan.id_organization == id_organization))).scalars().all()
+    parent_test_plan = (
+        select(TestPlan.id_test_plan,
+               TestPlan.id_organization,
+               TestPlan.id_parent,
+               TestPlan.name_test_plan,
+               literal(0).label('lvl'))
+        .select_from(TestPlan)
+        .where(TestPlan.id_organization == id_organization,
+               TestPlan.id_parent.is_(None))
+    ).cte(name='main_testplans',recursive=True)
+    childs_cte = parent_test_plan.union_all(
+        select(TestPlan.id_test_plan,
+               TestPlan.id_organization,
+               TestPlan.id_parent,
+               TestPlan.name_test_plan,
+               (parent_test_plan.c.lvl + 1).label('lvl'))
+        .select_from(TestPlan)
+        .join(parent_test_plan, parent_test_plan.c.id_test_plan == TestPlan.id_parent)
+    )
+    return (await db.execute(select(childs_cte).order_by(childs_cte.c.lvl.desc()))).fetchall()
 
 
 @router.post('')
