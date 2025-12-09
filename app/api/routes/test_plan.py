@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, literal
 
 from app.api.deps import get_db
-from app.models import TestPlan
+from app.models import TestPlan, TestCase
 from app.schemas import TestPlanDBQuery, TestPlanCreate, TestPlanUpdate, TestPlanDelete
 
 router = APIRouter(prefix='/test_plan', tags=['Test Plan'])
@@ -15,8 +15,11 @@ async def get_test_plan(id_organization: int, db: AsyncSession = Depends(get_db)
                TestPlan.id_organization,
                TestPlan.id_parent,
                TestPlan.name_test_plan,
+               TestCase.id_test_case,
+               TestCase.name_test_case,
                literal(0).label('lvl'))
         .select_from(TestPlan)
+        .outerjoin(TestCase, TestCase.id_test_plan == TestPlan.id_test_plan)
         .where(TestPlan.id_organization == id_organization,
                TestPlan.id_parent.is_(None))
     ).cte(name='main_testplans',recursive=True)
@@ -25,8 +28,11 @@ async def get_test_plan(id_organization: int, db: AsyncSession = Depends(get_db)
                TestPlan.id_organization,
                TestPlan.id_parent,
                TestPlan.name_test_plan,
+               TestCase.id_test_case,
+               TestCase.name_test_case,
                (parent_test_plan.c.lvl + 1).label('lvl'))
         .select_from(TestPlan)
+        .outerjoin(TestCase, TestCase.id_test_plan == TestPlan.id_test_plan)
         .join(parent_test_plan, parent_test_plan.c.id_test_plan == TestPlan.id_parent)
     )
     return (await db.execute(select(childs_cte).order_by(childs_cte.c.lvl.desc()))).fetchall()
