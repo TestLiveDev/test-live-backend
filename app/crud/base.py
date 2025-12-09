@@ -10,13 +10,18 @@ class CRUDBase:
         res = await db.execute(select(self.model).where(*args).limit(1))
         return res.scalars().one_or_none()
 
+    async def create(self, db: AsyncSession, values: dict):
+        obj = self.model(**dict(values))
+        db.add(obj)
+        await db.flush()
+        return obj
+
     async def update(self, db: AsyncSession, values: dict, *args):
         return await db.execute(
             update(self.model)
             .where(*args)
             .values(*values)
         )
-        return res
     
     async def delete(self, db: AsyncSession, *args):
         return await db.execute(

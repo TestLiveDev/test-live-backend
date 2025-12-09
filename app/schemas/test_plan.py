@@ -7,6 +7,8 @@ class TestPlanDBQuery(DBExecuteModel):
     id_organization: int
     id_parent: int | None
     name_test_plan: str
+    id_test_case: int | None
+    name_test_case: str | None
     lvl: int
 
 
